@@ -5,8 +5,8 @@
 // entry side goes too, the one after its twin, which the C searches for; and the
 // shades the colours index.
 //
-//   portalc_mapasm > mapdata.6502
-//   portalc_mapasm --stress > stressdata.6502    (the stress scene, for the walk's check)
+//   portal_mapasm > mapdata.6502
+//   portal_mapasm --stress > stressdata.6502    (the stress scene, for the walk's check)
 
 #include <stdbool.h>
 #include <stdint.h>
@@ -55,13 +55,13 @@ int main(int argc, char **argv)
         pt_stress_scene_init(&m);
         printf("\\\\ stressdata.6502 - the stress scene (map.c's pt_stress_scene_init), for the "
                "walk's check:\n"
-               "\\\\ as mapdata.6502. Made by portalc_mapasm --stress (make map): don't edit "
+               "\\\\ as mapdata.6502. Made by portal_mapasm --stress (make map): don't edit "
                "it.\n\n");
     } else {
         pt_scene_init(&m);
         printf("\\\\ mapdata.6502 - the demo scene (map.c's pt_scene_init), a table a field, "
                "each within a page.\n"
-               "\\\\ Made by portalc_mapasm (make map): don't edit it. "
+               "\\\\ Made by portal_mapasm (make map): don't edit it. "
                "The map's routines are in map.6502.\n\n");
     }
 

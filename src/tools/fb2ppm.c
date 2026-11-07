@@ -1,5 +1,5 @@
 // fb2ppm.c - extract one frame of a sweep dump (a concatenation of raw
-// framebuffers, as portalc_sweep writes) as a PPM image, pixels doubled
+// framebuffers, as portal_sweep writes) as a PPM image, pixels doubled
 // horizontally for MODE 5's aspect.
 
 #include <stdio.h>
@@ -13,7 +13,7 @@ static uint8_t rgba[PT_SCREEN_WIDTH * PT_SCREEN_SCANLINES * 4];
 int main(int argc, char **argv)
 {
     if (argc != 4) {
-        fprintf(stderr, "usage: portalc_fb2ppm sweep.bin out.ppm frame\n");
+        fprintf(stderr, "usage: portal_fb2ppm sweep.bin out.ppm frame\n");
         return 1;
     }
 

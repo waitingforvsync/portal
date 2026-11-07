@@ -1,4 +1,4 @@
-// main.c - portalc test runner.
+// main.c - portal test runner.
 
 #include "richc/test.h"
 

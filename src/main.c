@@ -293,7 +293,7 @@ int main(void)
                    PT_CAM_START_ANGLE);
 
     rc_app_init(&(rc_app_desc) {
-        .title = RC_STR("portalc"),
+        .title = RC_STR("portal"),
         .size = {PT_WINDOW_WIDTH * PT_WINDOW_SCALE, PT_WINDOW_HEIGHT * PT_WINDOW_SCALE},
         .resizable = true,
         .callbacks = {

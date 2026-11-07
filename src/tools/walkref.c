@@ -1,6 +1,6 @@
 // walkref.c - the walk's answers as JSON, for make test's check of the Beeb's
-// (beeb/test/walk.6502). Run as portalc_walkref > walk.json, over the demo scene. Built as
-// portalc_walk3ref (WALK_STRESS), it's over the stress scene with the walk's depth capped at 3,
+// (beeb/test/walk.6502). Run as portal_walkref > walk.json, over the demo scene. Built as
+// portal_walk3ref (WALK_STRESS), it's over the stress scene with the walk's depth capped at 3,
 // so the cut-off runs (the demo scene nests 10 deep at most), and so do the children with no
 // room, which the demo scene never has.
 

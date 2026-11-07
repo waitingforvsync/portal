@@ -1,5 +1,5 @@
 // captureref.c - the capture's answers as JSON, for make test's check of the Beeb's
-// (beeb/test/capture.6502). Run as portalc_captureref > capture.json.
+// (beeb/test/capture.6502). Run as portal_captureref > capture.json.
 
 #include <stdint.h>
 #include <stdio.h>

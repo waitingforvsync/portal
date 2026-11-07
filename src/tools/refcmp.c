@@ -3,11 +3,11 @@
 // when it matches the reference neither on its own row nor a row up or
 // down (rounding at an edge). Sprites are off: the reference has none.
 //
-//   portalc_refcmp MAP OUT                    every pose of MAP (0 the demo
+//   portal_refcmp MAP OUT                    every pose of MAP (0 the demo
 //                                             scene, 9 the stress map): per
 //                                             frame its pose and the pixels
 //                                             wrong, for refcmp.py
-//   portalc_refcmp MAP OUT.ppm X Y ANGLE CELL one pose: the frame, the
+//   portal_refcmp MAP OUT.ppm X Y ANGLE CELL one pose: the frame, the
 //                                             reference and the wrong pixels
 //
 // The poses: every cell's centroid at 64 angles, 20,000 at random, and the
@@ -321,8 +321,8 @@ static void picture(const char *path)
 int main(int argc, char **argv)
 {
     if (argc != 3 && argc != 7) {
-        fprintf(stderr, "usage: portalc_refcmp MAP OUT\n"
-                        "       portalc_refcmp MAP OUT.ppm X Y ANGLE CELL\n");
+        fprintf(stderr, "usage: portal_refcmp MAP OUT\n"
+                        "       portal_refcmp MAP OUT.ppm X Y ANGLE CELL\n");
         return 1;
     }
     int which = atoi(argv[1]);

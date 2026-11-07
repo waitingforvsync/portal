@@ -1,6 +1,6 @@
 # ---- portal engine tests ----
 
-add_executable(portalc_test
+add_executable(portal_test
     main.c
     test_arith.c
     test_map.c
@@ -14,19 +14,19 @@ add_executable(portalc_test
     probes/probe_walk.c
 )
 
-target_link_libraries(portalc_test PRIVATE portal)
+target_link_libraries(portal_test PRIVATE portal)
 
 if(MSVC)
-    target_compile_options(portalc_test PRIVATE /W3)
+    target_compile_options(portal_test PRIVATE /W3)
 else()
-    target_compile_options(portalc_test PRIVATE -Wall -Wextra)
+    target_compile_options(portal_test PRIVATE -Wall -Wextra)
 endif()
 
 # run the tests as a post-build step, richc style
 add_custom_command(
-    TARGET portalc_test POST_BUILD
-    COMMAND $<TARGET_FILE:portalc_test>
-    WORKING_DIRECTORY $<TARGET_FILE_DIR:portalc_test>
-    COMMENT "Running portalc tests"
+    TARGET portal_test POST_BUILD
+    COMMAND $<TARGET_FILE:portal_test>
+    WORKING_DIRECTORY $<TARGET_FILE_DIR:portal_test>
+    COMMENT "Running portal tests"
     VERBATIM
 )

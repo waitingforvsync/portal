@@ -1,7 +1,7 @@
 // frameref.c - whole frames' answers as JSON, for make test's check of the Beeb's
 // (beeb/test/frame.6502): from each place, at each angle, the frame as pt_render_view draws it
 // (the capture, the fill and the sprites, then the unplot), its screen summed by place. Run as
-// portalc_frameref > frame.json, over the demo scene. Built as portalc_frame3ref (FRAME_STRESS),
+// portal_frameref > frame.json, over the demo scene. Built as portal_frame3ref (FRAME_STRESS),
 // it's over the stress scene with the walk's depth capped at 3, as walk3ref's.
 //
 // The sums are made here, a pair a place, as the Beeb's FLETCHER makes them: the screens' bytes

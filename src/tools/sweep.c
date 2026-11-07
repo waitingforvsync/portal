@@ -22,7 +22,7 @@ int main(int argc, char **argv)
 {
     bool sprites = !(argc == 3 && strcmp(argv[1], "--no-sprites") == 0);
     if (argc != 2 && sprites) {
-        fprintf(stderr, "usage: portalc_sweep [--no-sprites] out.bin\n");
+        fprintf(stderr, "usage: portal_sweep [--no-sprites] out.bin\n");
         return 1;
     }
     const char *out = argv[argc - 1];

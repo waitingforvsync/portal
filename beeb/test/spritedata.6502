@@ -1,5 +1,5 @@
 \\ spritedata.6502 - the sprite check's arts, as mapdata.6502 has its own: the demo scene's,
-\\ the stress scene's and six made up. Made by portalc_spriteref --arts (make map): don't edit it.
+\\ the stress scene's and six made up. Made by portal_spriteref --arts (make map): don't edit it.
 
 map_art_e = {0, 0, 80, 240, 245, 0, 0, 0, 0, 0, 90, 245, 0, 0, 0, 0, 0, 5, 191, 176, 80, 85, 191, 191, 0, 248, 128, 53, 85, 80, 255, 95, 0, 245, 240, 8, 136, 95, 90, 90, 0, 95, 128, 53, 176, 245, 255, 248, 0, 180, 143, 5, 95, 0, 245, 180, 0, 85, 135, 255, 176, 85, 251, 90}
 map_art_o = {0, 0, 160, 240, 250, 0, 0, 0, 0, 0, 165, 250, 0, 0, 0, 0, 0, 10, 239, 224, 245, 175, 239, 239, 0, 242, 32, 197, 175, 170, 255, 250, 0, 250, 240, 2, 34, 250, 175, 245, 0, 175, 32, 197, 224, 250, 255, 242, 0, 225, 47, 170, 250, 0, 250, 225, 0, 170, 45, 255, 224, 250, 254, 175}

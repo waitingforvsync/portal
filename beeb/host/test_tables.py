@@ -5,7 +5,7 @@ loader made every table just as arith.c does.
     test_tables.py DISC SYMBOLS TABLES
 
 SYMBOLS is Baron's symbol dump, for where the tables are; TABLES is
-portalc_tables' JSON, the C's. trowhi, which the C hasn't (it works the
+portal_tables' JSON, the C's. trowhi, which the C hasn't (it works the
 page out), is checked against T_ORG; shr3, which it writes out as b >> 3,
 against b >> 3; the fill's, which are the Beeb's alone, against its blocks'
 places. The tables are read until they match, or for 20 seconds: the loader

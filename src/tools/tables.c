@@ -2,7 +2,7 @@
 // 16-bit table as its low bytes, then its high bytes, each a table of its
 // own), for beeb/'s check that its loader builds the same.
 //
-//   portalc_tables > tables.json
+//   portal_tables > tables.json
 
 #include <stdint.h>
 #include <stdio.h>

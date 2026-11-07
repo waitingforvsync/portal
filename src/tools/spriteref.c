@@ -2,8 +2,8 @@
 // (beeb/test/sprite.6502); and with --arts, the arts they plot as Baron source, for
 // beeb/test/spritedata.6502 (make map).
 //
-//   portalc_spriteref > sprite.json
-//   portalc_spriteref --arts > spritedata.6502
+//   portal_spriteref > sprite.json
+//   portal_spriteref --arts > spritedata.6502
 
 #include <stdbool.h>
 #include <stdint.h>
@@ -125,7 +125,7 @@ static void print_arts(void)
 {
     printf("\\\\ spritedata.6502 - the sprite check's arts, as mapdata.6502 has its own: the demo "
            "scene's,\n"
-           "\\\\ the stress scene's and six made up. Made by portalc_spriteref --arts (make map): "
+           "\\\\ the stress scene's and six made up. Made by portal_spriteref --arts (make map): "
            "don't edit it.\n\n");
     uint8_t e[8 * ARTS], o[8 * ARTS];
     for (unsigned i = 0; i < 8 * ARTS; i++) {

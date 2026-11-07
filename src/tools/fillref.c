@@ -1,5 +1,5 @@
 // fillref.c - the fill's answers as JSON, for make test's check of the Beeb's
-// (beeb/test/fill.6502). Run as portalc_fillref > fill.json.
+// (beeb/test/fill.6502). Run as portal_fillref > fill.json.
 
 #include <stdint.h>
 #include <stdio.h>

@@ -242,22 +242,22 @@ The rest:
 ### Checking
 
 - What the C has, the 6502 matches byte for byte, and `make test` checks it
-  in b2: `make test_tables`, the loader's tables against `portalc_tables`;
-  `make test_arith`, the macros against `portalc_arithref`;
-  `make test_vcache`, the vertex cache against `portalc_vcacheref`;
+  in b2: `make test_tables`, the loader's tables against `portal_tables`;
+  `make test_arith`, the macros against `portal_arithref`;
+  `make test_vcache`, the vertex cache against `portal_vcacheref`;
   `make test_capture`, the capture, made-up instances too (and drawn),
-  against `portalc_captureref`; `make test_plot`, the plotters and the
-  unplot against `portalc_plotref`; `make test_clip`, the clips against
-  `portalc_clipref`; `make test_walk`, whole captures with their sprites'
-  instances, each place's first frame unplotted, against `portalc_walkref`,
+  against `portal_captureref`; `make test_plot`, the plotters and the
+  unplot against `portal_plotref`; `make test_clip`, the clips against
+  `portal_clipref`; `make test_walk`, whole captures with their sprites'
+  instances, each place's first frame unplotted, against `portal_walkref`,
   and `make test_walk3`, over the stress scene with the depth capped at 3,
-  against `portalc_walk3ref`; `make test_fill`, the fill against
-  `portalc_fillref`; `make test_sprite`, the sprite plotters against
-  `portalc_spriteref`; `make test_frame`, whole frames, sprites drawn,
-  against `portalc_frameref`, and `make test_frame3`, over the stress scene,
-  against `portalc_frame3ref`; `make test_camera`, the camera's tick against
-  `portalc_cameraref`, and `make test_camerastress`, over the stress scene,
-  against `portalc_camerastressref`.
+  against `portal_walk3ref`; `make test_fill`, the fill against
+  `portal_fillref`; `make test_sprite`, the sprite plotters against
+  `portal_spriteref`; `make test_frame`, whole frames, sprites drawn,
+  against `portal_frameref`, and `make test_frame3`, over the stress scene,
+  against `portal_frame3ref`; `make test_camera`, the camera's tick against
+  `portal_cameraref`, and `make test_camerastress`, over the stress scene,
+  against `portal_camerastressref`.
 - A macro or routine is run over every input where that's feasible,
   summed where the answers won't fit. Each check is its own program,
   `test/CHECK_portal.6502` (`-D TEST=TRUE`), with only the engine files it

@@ -1,6 +1,6 @@
 // cameraref.c - the camera's tick's answers as JSON, for make test's check of the Beeb's
-// (beeb/test/camera.6502). Run as portalc_cameraref > camera.json, over the demo scene. Built as
-// portalc_camerastressref (CAMERA_STRESS), it's over the stress scene: its wedge's sharp corner
+// (beeb/test/camera.6502). Run as portal_cameraref > camera.json, over the demo scene. Built as
+// portal_camerastressref (CAMERA_STRESS), it's over the stress scene: its wedge's sharp corner
 // blocks a slide for its three rounds, which the demo scene's square ones never do.
 
 #include <stdbool.h>

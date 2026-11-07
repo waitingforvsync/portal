@@ -1,6 +1,6 @@
 // arithref.c - arith.c's logs, exps, polar forms, sines' multiplies and fractions as JSON: every
 // answer make test checks the Beeb's macros against (beeb/test/arith.6502). Run as
-// portalc_arithref > arith.json.
+// portal_arithref > arith.json.
 
 #include <stdint.h>
 #include <stdio.h>

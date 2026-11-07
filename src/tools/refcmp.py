@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""refcmp.py - two runs of portalc_refcmp against each other.
+"""refcmp.py - two runs of portal_refcmp against each other.
 
     refcmp.py OLD NEW       the pixels wrong against the reference in each,
                             the frames each does better, and the worst

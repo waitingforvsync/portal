@@ -1,5 +1,5 @@
 // plotref.c - the plotters' answers as JSON, for make test's check of the Beeb's
-// (beeb/test/plot.6502). Run as portalc_plotref > plot.json.
+// (beeb/test/plot.6502). Run as portal_plotref > plot.json.
 
 #include <stdint.h>
 #include <stdio.h>

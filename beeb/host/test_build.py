@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """test_build.py - boot one of make test's checks in b2, as a Master 128 (its own PORTAL, from
-test/CHECK_portal.6502), and compare its answers with its C tool's: portalc_CHECKref."""
+test/CHECK_portal.6502), and compare its answers with its C tool's: portal_CHECKref."""
 
 import json
 import sys

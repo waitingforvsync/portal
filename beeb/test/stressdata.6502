@@ -1,5 +1,5 @@
 \\ stressdata.6502 - the stress scene (map.c's pt_stress_scene_init), for the walk's check:
-\\ as mapdata.6502. Made by portalc_mapasm --stress (make map): don't edit it.
+\\ as mapdata.6502. Made by portal_mapasm --stress (make map): don't edit it.
 
 \\ Where the camera starts (camera.h), and the cell that holds it.
 

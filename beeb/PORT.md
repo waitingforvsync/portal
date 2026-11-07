@@ -21,7 +21,7 @@ ambitions.
 
 | C | 6502 | State |
 |---|---|---|
-| `pt_arith_init` (arith.c) | `make_tables` (tables.6502), packed at assembly time by `pk_` and unpacked by `UNPACK` | done: every byte, `portalc_tables` |
+| `pt_arith_init` (arith.c) | `make_tables` (tables.6502), packed at assembly time by `pk_` and unpacked by `UNPACK` | done: every byte, `portal_tables` |
 | main.c's loop: `pt_camera_tick`, `pt_render_frame` | `start` (start.6502): `update_camera`, `capture`, wait, `fill`, `sprites`, swap, `unplot` | done: the demo runs, walking, sprites and all |
 | main.c's `gather_input` | `irq` (irq.6502): vsync count, keys as the `IN_` bits, screen swap | done, checked by hand in jsbeeb |
 | — | `boot.6502`: finds a sideways RAM bank | Beeb only, in progress |
@@ -32,7 +32,7 @@ ambitions.
 
 | C | 6502 | State |
 |---|---|---|
-| `pt_log2_8` | `LOG2_8` | done: every b, `portalc_arithref` |
+| `pt_log2_8` | `LOG2_8` | done: every b, `portal_arithref` |
 | `pt_log2` | `LOG2_16 bits`: the low byte shifted down k - 1, through compares on the high byte into a run of shifts | done: every x at each bound from 9 to 16, summed |
 | `pt_exp2` (`exp2_byte`) | `EXP2_8` | done: every l under 2048 |
 | `pt_exp2` | `EXP2_16 bits`: `EXP2_8`, or 1.f shifted up, through compares into a run of shifts up to 2^13, and past that a branch into it self-modified from `exp2_skip` (arith.6502) | done, in `make_line`'s check |
@@ -41,29 +41,29 @@ ambitions.
 | `pt_view_col` | `LDA a2c,X` | done (a lookup) |
 | `pt_log_secant`, with the C's `view8` | `LOG_SECANT`: where in `lsec` it is | done, in `edge_ends`' check |
 | `pt_log_sine` | `LOG_SINE`: where in `lsec16` it is, negated | done, in `edge_ends`' check |
-| `pt_mul_sin`, `pt_mul_cos`, with `sin_mag` | `MULTIPLY_SINE` (cosine by a flag), with `SINE`: \|v\| times the magnitude, the low byte's product rounded, then signed | done: every angle, 128 made-up values at each, summed by four angles, `portalc_arithref` |
+| `pt_mul_sin`, `pt_mul_cos`, with `sin_mag` | `MULTIPLY_SINE` (cosine by a flag), with `SINE`: \|v\| times the magnitude, the low byte's product rounded, then signed | done: every angle, 128 made-up values at each, summed by four angles, `portal_arithref` |
 | `pt_mul_sin` of whole units shifted up 8 (the move, the pushes) | `UNITS_SINE`: n times the magnitude, one multiply, exact | done: every angle, every n under 128 |
 | `pt_dot_dir` | `DOT_DIRECTION` | done: every angle, 128 made-up vectors at each |
 | `pt_mulu16_frac` | `MULTIPLY_FRACTION` | done: every fraction, 128 made-up values at each |
-| `pt_rpost` | `LDA rpost,X`, X `d2 >> 3` | the table: done, `portalc_tables` |
+| `pt_rpost` | `LDA rpost,X`, X `d2 >> 3` | the table: done, `portal_tables` |
 
 ### The map and the vertex cache
 
 | C | 6502 | State |
 |---|---|---|
-| `pt_scene_init` (map.c) | mapdata.6502, made by `portalc_mapasm` (`make map`) | done, checked once by hand in b2 |
+| `pt_scene_init` (map.c) | mapdata.6502, made by `portal_mapasm` (`make map`) | done, checked once by hand in b2 |
 | `pt_render_init`, `pt_vcache_init`: emptied caches | `map_init` (map.6502): `vc_slot`, `cell_visit`, `vc_num` | done |
-| `pt_vcache_vert` | `VCACHE_VERT_TO_X`, with `vcache_make` on a miss | done: every vertex from every vertex, `portalc_vcacheref` |
+| `pt_vcache_vert` | `VCACHE_VERT_TO_X`, with `vcache_make` on a miss | done: every vertex from every vertex, `portal_vcacheref` |
 | `pt_vcache_reset` | `vcache_reset` | done |
 | `pt_map_ring_next` (map.h) | `RING_NEXT` (map_macros.6502) | done |
-| `pt_vcache_locate`, `side_crossed` | `vcache_locate`: each portal side's angle from its start vertex to its end (`RING_NEXT`), 10 bits | done: the cells located at 8 by 8 positions round each place, -31 to 32 units off, from its cell: `portalc_vcacheref` (3,894 sides crossed, 26 half turns, 9 of them crossed, 353 locates of two hops or more) |
+| `pt_vcache_locate`, `side_crossed` | `vcache_locate`: each portal side's angle from its start vertex to its end (`RING_NEXT`), 10 bits | done: the cells located at 8 by 8 positions round each place, -31 to 32 units off, from its cell: `portal_vcacheref` (3,894 sides crossed, 26 half turns, 9 of them crossed, 353 locates of two hops or more) |
 | `pt_vcache_move` | — | not ported: the camera empties the cache whenever it moves (the C's camera too); only `pt_render_frame`, the C's probes', compares |
 
 ### The camera
 
 | C | 6502 | State |
 |---|---|---|
-| `pt_camera_tick` (camera.c) | `update_camera` (move.6502): the frame's ticks and keys, then `camera_tick` for each 4 of them: the turn, the move, the walls (`add_wall`, `add_post`), the resolve, the slide (`slide`), the posts (`corner_deflect`), the transition | done: from each place 32 frames of made-up keys and 1 to 4 ticks, and 32 frames into its corner, the camera after each summed by place: `portalc_cameraref` over the demo scene, `portalc_camerastressref` over the stress scene (whose wedge blocks a slide for three rounds). The camera's state is camera.6502's |
+| `pt_camera_tick` (camera.c) | `update_camera` (move.6502): the frame's ticks and keys, then `camera_tick` for each 4 of them: the turn, the move, the walls (`add_wall`, `add_post`), the resolve, the slide (`slide`), the posts (`corner_deflect`), the transition | done: from each place 32 frames of made-up keys and 1 to 4 ticks, and 32 frames into its corner, the camera after each summed by place: `portal_cameraref` over the demo scene, `portal_camerastressref` over the stress scene (whose wedge blocks a slide for three rounds). The camera's state is camera.6502's |
 | `side_across`, `foot_in_range` | `wall_distance`, `wall_foot`, through `vertex_dot` and `dot_direction` | done, in the tick's checks |
 | `corner_deflect`, with `mulu16x8_lo` | `corner_deflect`, with `quartered` | done, in the tick's checks |
 | `apply` | `shift_camera` | done, in the tick's checks |
@@ -72,8 +72,8 @@ ambitions.
 
 | C | 6502 | State |
 |---|---|---|
-| `pt_render_capture` | `capture` (walk.6502): `capture_root`, `walk`, `forget_visits` | done, the sprites' instances too: `portalc_walkref`, whole captures from the 146 places at 32 angles each; and `portalc_walk3ref`, the stress scene's 106 places, the depth capped at 3 |
-| `pt_render_root`, `frame`'s setup | `capture_root` (capture.6502) | done: `portalc_captureref`, from 146 places, each cell's centroid and near each of its corners |
+| `pt_render_capture` | `capture` (walk.6502): `capture_root`, `walk`, `forget_visits` | done, the sprites' instances too: `portal_walkref`, whole captures from the 146 places at 32 angles each; and `portal_walk3ref`, the stress scene's 106 places, the depth capped at 3 |
+| `pt_render_root`, `frame`'s setup | `capture_root` (capture.6502) | done: `portal_captureref`, from 146 places, each cell's centroid and near each of its corners |
 | `pt_render_root_side`, `root_screen_angle` | inline in `capture_root` | done |
 | `root_walk` | inline in `capture_root` | done |
 | `visit_of` | `visit_of` | done |
@@ -89,7 +89,7 @@ ambitions.
 | `frame`'s visit cache clear | `forget_visits` | done |
 | `walk`, `descend`, `enter` | `walk` (walk.6502), with `descend`'s cut-off inline; `enter` | done, in the walk's checks |
 | `process_edge`, `edge_line` | `process_edge`, `edge_line`; this cell's lines through `ceiling_line` and `floor_line` (`ceiling_line_xy` and `floor_line_xy` colour them first) | done, in the walk's checks: every path but a level ceiling that changes colour, which neither scene has |
-| `clip_plain`, `clip_floor`, `clip_ceil` | the same (clip.6502) | done: 256 made-up lines from `make_line`, each clipped 16 times, every kind against every combination of the bounds' edges, `portalc_clipref` |
+| `clip_plain`, `clip_floor`, `clip_ceil` | the same (clip.6502) | done: 256 made-up lines from `make_line`, each clipped 16 times, every kind against every combination of the bounds' edges, `portal_clipref` |
 | `scan_of`, `scan` | `SCAN_EDGES`, `SCAN` (clip_macros.6502) | done, in the clips' check |
 | `plain_col`, `floor_col`, `ceil_col` | `plain_columns`, `floor_columns`, `ceil_columns`; and a plain line's own columns in `plain_own`, through `PLAIN_OWN` | done, in the clips' check |
 | `floor_fast_col`, `ceil_fast_col` | `WRITE_ROWS`: X counts up to the page's end or middle, the store's base and the gradient patched in | done, in the clips' check |
@@ -97,25 +97,25 @@ ambitions.
 | `fast_inside`, `on_screen`, `flat_top` | `COLUMNS`, `ROW_AT` and `ROWS_INSIDE`; `ON_SCREEN`, `flat_top` | done, in the clips' check |
 | the C sweep's 19,162 clip calls | replayed through the assembled clips on a cycle-exact model: the same as the C's, 5,210 cycles a frame | checked once, 2026-10-14 |
 | `close_columns` | `close_columns` | done, in the clips' check |
-| `plot_run`, with `record` | `plot_run` (plot.6502) | done: 9,600 made-up runs at 75 gradients, each run's record and `toggle_end`, and T after each gradient's, `portalc_plotref` |
+| `plot_run`, with `record` | `plot_run` (plot.6502) | done: 9,600 made-up runs at 75 gradients, each run's record and `toggle_end`, and T after each gradient's, `portal_plotref` |
 | `pt_plot_shallow`, `pt_plot_steep` | `plot_shallow`, `plot_steep`, through `SHALLOW` and `STEEP` (plot_macros.6502), each expanded falling and rising | done, in `plot_run`'s check |
 | `pt_plot_flat` | `plot_flat` | done: every x0 < x1 |
 | mode5.h's cursor | `MODE5_AT`, `MODE5_EOR` (and `MODE5_EOR_X`, the mask in X), `MODE5_DOWN`, `MODE5_UP`, `MODE5_NEXT` | done, in the plotters' checks |
 | `pt_mode5_zero`, and `pt_mode5_down`, `_up` for the unplot | `UNPLOT_ROW`, `UNPLOT_MOVE` | done, in the unplot's checks |
 | `pt_mode5_plot` | — | not ported: only `close_columns` uses it (step 4), and it never ran in the sweep |
-| `inst_new`, `inst_clip`, `inst_hide` | `instance_new`, `instance_clip`, `instance_hide` (instance.6502); `PLOTTED_SIZE` (instance_macros.6502), `inst_new`'s `pw` and `ph` | done: each frame's instances in the walks' checks (each column's top, and its bottom where the top isn't 0: a hidden column's bottom is the pool's leftovers, never read); and 1,024 cases of 3 to 6 made-up instances in the capture's, `portalc_captureref`, for the paths the walk never takes (a floor level with the eye or above it, the centre's offset saturating, the draw order, the pool full, a hide over no columns); and a near sprite on a floor far below the eye, its offset past 255 rows |
+| `inst_new`, `inst_clip`, `inst_hide` | `instance_new`, `instance_clip`, `instance_hide` (instance.6502); `PLOTTED_SIZE` (instance_macros.6502), `inst_new`'s `pw` and `ph` | done: each frame's instances in the walks' checks (each column's top, and its bottom where the top isn't 0: a hidden column's bottom is the pool's leftovers, never read); and 1,024 cases of 3 to 6 made-up instances in the capture's, `portal_captureref`, for the paths the walk never takes (a floor level with the eye or above it, the centre's offset saturating, the draw order, the pool full, a hide over no columns); and a near sprite on a floor far below the eye, its offset past 255 rows |
 
 ### After the capture
 
 | C | 6502 | State |
 |---|---|---|
-| `pt_mode5_fill` (mode5.c), with `frame`'s start colour | `fill` (fill.6502), the camera cell's ceiling's colour, then on into `fill_colour`: `FILL_COLUMNS` (fill_macros.6502) through each screen's blocks, `FILL_BODY` and `FILL_TAIL` | done: 64 made-up frames, every end into each screen, half from a cell's ceiling, `portalc_fillref` |
-| `pt_sprite_plot` (sprite.c): `setup` | `sprite_plot` (sprite.6502): the row edges in three parts (under the screen, on it, over it), the column walk to the first column on the screen, the strips' pairs the sprite's (a whole sprite's are never classed), then the plotter by the art's crossover, on into the engine | done: 1,024 made-up sprites, `portalc_spriteref`: a sixteenth to 16x, every other under 1x (an eighth of those 1x itself, a quarter at the right edge), those over 4x far off the screen one way (left, right, or over it, past 255 pairs); eight kinds of clip, held from varied first columns; eight arts (the demo scene's, the stress scene's, five made up and one made for swallowing) |
+| `pt_mode5_fill` (mode5.c), with `frame`'s start colour | `fill` (fill.6502), the camera cell's ceiling's colour, then on into `fill_colour`: `FILL_COLUMNS` (fill_macros.6502) through each screen's blocks, `FILL_BODY` and `FILL_TAIL` | done: 64 made-up frames, every end into each screen, half from a cell's ceiling, `portal_fillref` |
+| `pt_sprite_plot` (sprite.c): `setup` | `sprite_plot` (sprite.6502): the row edges in three parts (under the screen, on it, over it), the column walk to the first column on the screen, the strips' pairs the sprite's (a whole sprite's are never classed), then the plotter by the art's crossover, on into the engine | done: 1,024 made-up sprites, `portal_spriteref`: a sixteenth to 16x, every other under 1x (an eighth of those 1x itself, a quarter at the right edge), those over 4x far off the screen one way (left, right, or over it, past 255 pairs); eight kinds of clip, held from varied first columns; eight arts (the demo scene's, the stress scene's, five made up and one made for swallowing) |
 | `pt_sprite_plot_engine`: `assign`, `strip_engine`, `strip_engine_clip`, `fetch`, `nearest`, `nearest_event`, `stretch` | `sprite_engine`: the strip's slots, the clean strip's runs under the screen, the clipped strip's events (each slot's next, `NEAREST_EVENT`), the stretch and `events_due`; the handlers `change1` to `change4` and `swallow1` to `swallow4`, from `CHANGES` and `CHANGE_COLUMN` (sprite_macros.6502) | done, in the plotters' check: every instruction run and each branch both ways, counted on the cycle-exact model |
 | `pt_sprite_plot_rebuild`: `strip_rebuild`, `strip_rebuild_clip`, `afetch`, `dummy`, `rebuild_pair` | `sprite_rebuild`; `REBUILD_FETCH`, `REBUILD_DUMMY`, and `REBUILD_PAIR`, inline in each strip's pair loop | done, in the plotters' check: every instruction run and each branch both ways |
 | `classify`, `findcol` | `strip_window`, `find_column` | done, in the plotters' check |
-| the sprite pass in `frame` | `sprites` (sprites.6502): each instance in the draw order to `sprite_plot`, whole if its visits showed every column, all of it (`whole && cols == width`) | done: whole frames (the capture, the fill, the sprites, the unplot) from the walk's places at 32 angles each, the screens summed by place: `portalc_frameref` over the demo scene, and `portalc_frame3ref` over the stress scene, the depth capped at 3; and the capture's made-up instance cases drawn, for sprites overlapping (`pt_render_sprites`, `portalc_captureref`) |
-| `unplot` (render.c), with `pt_render_unplot` for the checks | `unplot` (unplot.6502), each record through `unplot_flat`, `unplot_shallow` or `unplot_steep`, then row 0 | done: the plotters' made-up runs cleared at each gradient, `portalc_plotref`; and each place's first frame in the walks' checks |
+| the sprite pass in `frame` | `sprites` (sprites.6502): each instance in the draw order to `sprite_plot`, whole if its visits showed every column, all of it (`whole && cols == width`) | done: whole frames (the capture, the fill, the sprites, the unplot) from the walk's places at 32 angles each, the screens summed by place: `portal_frameref` over the demo scene, and `portal_frame3ref` over the stress scene, the depth capped at 3; and the capture's made-up instance cases drawn, for sprites overlapping (`pt_render_sprites`, `portal_captureref`) |
+| `unplot` (render.c), with `pt_render_unplot` for the checks | `unplot` (unplot.6502), each record through `unplot_flat`, `unplot_shallow` or `unplot_steep`, then row 0 | done: the plotters' made-up runs cleared at each gradient, `portal_plotref`; and each place's first frame in the walks' checks |
 | `pt_unplot_shallow`, `pt_unplot_steep` (plot.c), with `unpart_`, `unbyte_` | `UNPLOT_SHALLOW`, `UNPLOT_STEEP` (unplot_macros.6502), with `UNPLOT_PART` and `UNPLOT_BYTES` | done, in the unplot's checks |
 
 ## Names
@@ -252,7 +252,7 @@ or two bytes of zero page.
 | `cells[i].floor`, `.ceil`, `.sprite` | `cell_floor`, `cell_ceil`, `cell_sprite` |
 | `edges[i].angle`, `.colour`, `.len8` | `edge_angle`, `edge_colour`, `edge_len8` |
 | `sides[i].v`, `.edge`, `.adj`, `.anghi` | `side_v`, `side_edge`, `side_adj`, `side_anghi` |
-| `pt_map_ring_next(across, pt_map_twin(m, s))` | `side_entry`, made by `portalc_mapasm`: the side after the twin, where a walk through the portal begins; 0 for a wall |
+| `pt_map_ring_next(across, pt_map_twin(m, s))` | `side_entry`, made by `portal_mapasm`: the side after the twin, where a walk through the portal begins; 0 for a wall |
 | `sprites[i].v`, `.art`, `.ls` | `sprite_v`, `sprite_art`, `sprite_lslo`, `sprite_lshi`: the base's centre a vertex of its own, so the vertex cache sees it (in the C too) |
 | `arts` | `art_pate`, `art_pato`, `art_lo`, `art_hi`, `art0`... |
 | `num_verts`, `num_cells`... | `MAP_VERTS`, `MAP_CELLS`... (assembly-time constants) |
@@ -402,7 +402,7 @@ C writes out: 256 and 1.25 * 2^15, in arith.h's notes on `rpost`.
   `enter` in its own place, as the C's tail call does, nothing saved.
 - **The depth counts down**, in `walk_levels`, from `MAX_DEPTH` - 1: past 0,
   the child's cut off.
-- **Entries and shades are tables.** `portalc_mapasm` writes `side_entry`, the
+- **Entries and shades are tables.** `portal_mapasm` writes `side_entry`, the
   side after the twin, where the C searches the cell across's ring for the
   twin and steps on; and `shade_even` and `shade_odd`, palette.c's catalogue.
 - **The walk works out the span.** Its side loop sets `span_x1`, the side's
@@ -600,7 +600,7 @@ C writes out: 256 and 1.25 * 2^15, in arith.h's notes on `rpost`.
   a value, as the sprite check does, would spread its cases; all its
   answers change, so it waits for a reason to touch that check.
 - To revisit, if the cycles are wanted: a `side_v1` map table, each side's
-  end vertex (`pt_map_side_v1`), written by `portalc_mapasm`. `side_end`
+  end vertex (`pt_map_side_v1`), written by `portal_mapasm`. `side_end`
   would then be `LDX side_v1,Y`, instead of finding the next side through
   `walk_vi`, `visit_cell` and `RING_NEXT` and reading its `side_v`: 228
   cycles a frame and 16 bytes of code, for `MAP_SIDES` bytes of map (119 in

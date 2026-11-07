@@ -1,14 +1,13 @@
-# Notes: the polar branch
+# Design notes
 
-The design notebook for `polar`, the rebuild of capture and rendering for
-frame rate. `main` keeps the old engine, and I switch branches in place to
+The design notebook for the rebuild of capture and rendering for frame
+rate. `legacy` keeps the old engine, and I switch branches in place to
 compare. JOURNAL.md stays the history; this is where the thinking lives,
 tried and kept or tried and dropped.
 
 ## Where it stands
 
-- **Phase 0, done.** The branch, and the ray-cast comparer in `src/tools`
-  (below).
+- **Phase 0, done.** The ray-cast comparer in `src/tools` (below).
 - **Phase 1, done.** The tables, built the way the 6502 will build them,
   and the polar front end's primitives in `arith.c`.
 - **Phase 2a, done.** The map in the new format: shared edges, and rings
@@ -33,10 +32,10 @@ tried and kept or tried and dropped.
   spritescale's two plotters, its format and rounding, clipped a pixel
   column at a time to the rows each column shows. Pixels under them
   unchanged.
-- **Phase 6, done (awaiting commit).** Measured against `main`: `main`'s
-  port on the emulator, `polar` by a cost model of timed primitives and
+- **Phase 6, done (awaiting commit).** Measured against `legacy`: `legacy`'s
+  port on the emulator, `main` by a cost model of timed primitives and
   sketched glue. A median frame 13 to 24% faster, sprites three times
-  cheaper, capture no cheaper. See "Measured against main".
+  cheaper, capture no cheaper. See "Measured against legacy".
 
 The phases are at the end.
 
@@ -73,7 +72,7 @@ Three things stand out:
 
 ## The shape of it
 
-Kept from `main`: convex cells, portals, the front-to-back walk with its
+Kept from `legacy`: convex cells, portals, the front-to-back walk with its
 visit cache, and the EOR fill. A raycaster would be simpler with a flat
 cost per column, but it gives up heights (the pit, the stairs), and once
 you add them back it turns into a per-column portal renderer anyway.
@@ -373,9 +372,9 @@ Axis-aligned walls make both shortcuts common.
 
 ### What goes when
 
-`main`'s 256-step sine is now derived from `sinq`, so `main`'s renderer and
-collision are untouched: every record the comparer writes is identical.
-The old helpers go as their users do:
+`legacy`'s 256-step sine is now derived from `sinq`, so `legacy`'s renderer
+and collision are untouched: every record the comparer writes is
+identical. The old helpers go as their users do:
 
 - **Phase 2, done:** `pt_dir8`, and the builder's and collision's
   `pt_rot`. `pt_div_q8` stays for now: the posts' deflection divides by
@@ -459,13 +458,13 @@ other isn't.
 
 The old renderer read per-side records, `pt_half`: start vertex, cell
 across, twin and colour, clockwise. Through phase 2 the builder made them
-alongside the sides, so `main`'s pictures stayed byte-identical until
+alongside the sides, so `legacy`'s pictures stayed byte-identical until
 phase 3a replaced the renderer. Now the map doesn't hold them at all. The
 builder keeps its own clockwise halves as scratch, as the scene names
 them, to match twins and make the edges, and the tests and tools read the
 sides.
 
-The Beeb port's host tools follow `main`'s map, so on `polar` they're off
+The Beeb port's host tools follow `legacy`'s map, so here they're off
 unless `PORTALC_BEEB_HOST` asks for them.
 
 ## Collision
@@ -492,7 +491,7 @@ slide iterations, the hop walk) with new pieces:
   that fails is crossed, so hop and look again. No old position's angles
   needed, and they're exactly the angles the frame's capture will look
   with, so the camera's cell and the capture's view can never disagree.
-  On `main` that took an exact cross product near each line, and
+  On `legacy` that took an exact cross product near each line, and
   `root_exact`'s retry.
 - **Ties to the lower cell.** Exactly a half turn apart (the point on the
   side), the lower-numbered cell keeps the point. Both cells give the same
@@ -569,7 +568,7 @@ beyond.
 ## The walk
 
 Phase 3a: the walk finds its way by the vertex cache's angles, and the
-clip is the per-column bounds. The lines themselves are still `main`'s,
+clip is the per-column bounds. The lines themselves are still `legacy`'s,
 made in view space from rotated vertices, then clipped and plotted the new
 way. Phase 3b makes the on-screen ones from the logs.
 
@@ -683,7 +682,7 @@ The rest carries over:
 When I prototyped per-column bounds before, every clamped line overdrew
 the bound. In the EOR fill a line only ever needs one toggle per column,
 so the overdraw is exactly the hidden columns, one pixel each. Counted
-from the C, against the pixels `main`'s plotter draws (which folds hidden
+from the C, against the pixels `legacy`'s plotter draws (which folds hidden
 columns into the bound pieces' colours):
 
 | per frame | typical | heavy | mean of 256 angles | `end_room_pit` |
@@ -691,7 +690,7 @@ columns into the bound pieces' colours):
 | line-columns | 298 | 530 | 334 | 447 |
 | hidden (clamped) | 28 | 67 | 118 | 67 |
 | toggles, immediate (+128 for the strip) | 426 | 658 | 462 | 575 |
-| pixels plotted on `main` | 397 | 591 | 344 | 538 |
+| pixels plotted on `legacy` | 397 | 591 | 344 | 538 |
 
 7 to 34% more pixels, against everything the plot pass and the pool cost.
 I'd thought about rendering bound pixels lazily: XOR hidden colours into a
@@ -712,7 +711,7 @@ Drawing a line):
   frame's 298 line-columns, and 387 of the heavy one's 530.
 - **Per line:** about 200 to set up.
 
-That's about 13k on the typical frame against `main`'s 31k for clipping,
+That's about 13k on the typical frame against `legacy`'s 31k for clipping,
 row evaluations and plotting, and about 31k against 73k on the heavy one.
 
 ### Gradients, and rows off the portal
@@ -756,7 +755,7 @@ Still. A vertex's column is the first whose centre lies right of it
 at `ex`, so each of a visit's columns belongs to exactly one edge. An edge
 from column 40 to 60 does 40 to 59, and the next one picks up at 60.
 
-`main` took `floor(64 + 64 y/x)`, the column the vertex is in, so its
+`legacy` took `floor(64 + 64 y/x)`, the column the vertex is in, so its
 edges sat up to half a column left of the pixel centres. The reference
 casts through the centres, so the angles round the right way.
 
@@ -846,14 +845,14 @@ anchor is the far end's row stepped back 5 columns, one `pt_mulg_u16`.
 (Column 70 is the next edge's: half open.)
 
 Rows stay bytes wherever the clip and the plotters look: `top` and `bot`,
-and a line's `y`, a row byte and a fraction byte, as `main`'s anchor
+and a line's `y`, a row byte and a fraction byte, as `legacy`'s anchor
 always was. Only line making goes wider: an offset is u8.8 up to 256 rows,
 and the saturated path's whole rows are 16 bits.
 
 On the 6502, my estimates: about 250 cycles a line (`log h`, two exps for
 the rows, two logs and an exp for the gradient), and 150 more for a near
 clip. An end is about 15 in view and 90 out of it. The typical frame's
-15 lines come to about 5.5k, against `main`'s 20k for making lines and
+15 lines come to about 5.5k, against `legacy`'s 20k for making lines and
 transforming vertices. The polar forms come on top, about 280 a vertex,
 but a frame that only turns doesn't redo them.
 
@@ -1088,7 +1087,7 @@ the even and the odd pattern.
   is a row on. The odd pixels at either end go one at a time. Whole bytes
   go four pixels at once: the three carries inside a byte pick one of
   eight fixed routines, each with its row masks as constants, and a fourth
-  says whether the next byte starts a row on. The same trees as `main`'s
+  says whether the next byte starts a row on. The same trees as `legacy`'s
   6502.
 - **Steep** (|g| >= 1). A pixel pair a column, moving on by the gradient's
   whole rows plus the fraction's carry.
@@ -1192,7 +1191,7 @@ Buffers). The small things, a frame on map 0, roughly:
 
 Plotting during capture means capture can't write into the back buffer:
 that stays on screen until the pending swap. Overlapping capture with that
-wait was worth half a vsync a frame on `main` (3.36 vsyncs a frame down to
+wait was worth half a vsync a frame on `legacy` (3.36 vsyncs a frame down to
 2.85). A separate toggle buffer, T, keeps it:
 
 1. capture plots into T while the swap is pending;
@@ -1371,7 +1370,7 @@ pass, for perhaps 0.6k a frame. Not done.
 
 Fill and clear, as estimated for the 6502: the fill about 33.4k (36.9k,
 less 8k stored alone, plus 4.5k of exits), the unplotter about 4.8k, and
-the bookkeeping and records about 2.5k. About 41k, against `main`'s 58.7k
+the bookkeeping and records about 2.5k. About 41k, against `legacy`'s 58.7k
 for its clear and fill: 18k a frame.
 
 ## Sprites after the fill
@@ -1403,10 +1402,10 @@ lines:
 - the bottom is the floor's row at that depth, make_line's offset from the
   visit's floor height, so it stands on the floor's own rows.
 
-Nearer than 32 units, `main`'s limit (16x for both arts), it isn't drawn.
+Nearer than 32 units, `legacy`'s limit (16x for both arts), it isn't drawn.
 The map's check makes sure no art's column could pass 255 pixels wide
 there. Facing the pit from 220 units the boulder comes out at 2.32x
-(exactly, 2.33x) and 32 pixels wide, and `main`'s frames agree within a
+(exactly, 2.33x) and 32 pixels wide, and `legacy`'s frames agree within a
 row.
 
 **What each column shows.** When `enter()` starts a visit, its bounds are in
@@ -1521,13 +1520,13 @@ over, 70% of the engine's strips on map 0, for runs it only had to pass
 by. Now clipped means a portal really cuts it. Map 9's obelisk is seen
 through doorways, so half its strips are.
 
-**Against main.** An independent review modelled both on the 6502: `main`'s
-sprite pass from its C and `beeb/src/sprites.6502` (which puts its heavy
-frame at 75.0k against the measured 73.5k), and polar's from spritescale's
-own binary run in an emulator (the boulder costs 17.7k at 1x, 29.8k at
-2.32x, 57.1k at 4x), plus the clipping:
+**Against legacy.** An independent review modelled both on the 6502:
+`legacy`'s sprite pass from its C and `beeb/src/sprites.6502` (which puts
+its heavy frame at 75.0k against the measured 73.5k), and `main`'s from
+spritescale's own binary run in an emulator (the boulder costs 17.7k at
+1x, 29.8k at 2.32x, 57.1k at 4x), plus the clipping:
 
-| The boulder, map 0 | on screen | `main` | polar | |
+| The boulder, map 0 | on screen | `legacy` | `main` | |
 |---|---|---|---|---|
 | 0.32x | 4 pixels, portal-clipped | 12.0k | 5.6k | 2.1x |
 | 1x | 14 x 16, whole | 62.8k | 18.8k | 3.3x |
@@ -1536,28 +1535,28 @@ own binary run in an emulator (the boulder costs 17.7k at 1x, 29.8k at
 | 4x, base below the screen | 56 x 64 | 94.9k | 36.8k | 2.6x |
 | 16x | the whole screen | 180.1k | about 91k | 2.0x |
 
-Polar's figures are from before this pass's fixes, but for the 4x and 16x
+`main`'s figures are from before this pass's fixes, but for the 4x and 16x
 rows, which have the runs under the screen passed by; the rest take a few
 percent more off.
-`main` paid about 370 cycles a pixel column before drawing anything, a
+`legacy` paid about 370 cycles a pixel column before drawing anything, a
 toggle scan down every byte column to the sprite's bottom, and about 370 a
-colour change; polar writes every visible pair, but shares its run work
+colour change; `main` writes every visible pair, but shares its run work
 between a strip's four pixels. There's no crossover for real art: only a
 tall, featureless sprite with transparency in every byte gets near.
 
-Everything else is unchanged: the sweep without sprites (`portalc_sweep
+Everything else is unchanged: the sweep without sprites (`portal_sweep
 --no-sprites`) is byte-identical to before, and so is the comparer, which
 has sprites off.
 
-## Measured against main
+## Measured against legacy
 
-`main` has a 6502 port, so its frames are measured: every golden pose, 22,568
-of them (the sweep, map 7 with its seven sprites, the rims, the stress
-map), through clear, capture, plot, the sprite pass and fill on
-`emu6502.py`. It gives the demo frames above to the cycle. `polar` has no
+`legacy` has a 6502 port, so its frames are measured: every golden pose,
+22,568 of them (the sweep, map 7 with its seven sprites, the rims, the
+stress map), through clear, capture, plot, the sprite pass and fill on
+`emu6502.py`. It gives the demo frames above to the cycle. `main` has no
 6502 yet, so its frames are a cost model: a generated copy of the C counts
-what each frame does, as `main`'s `trace.py` does, about 130 counters, and
-each count has a weight in cycles.
+what each frame does, as `legacy`'s `trace.py` does, about 130 counters,
+and each count has a weight in cycles.
 
 **The weights.**
 
@@ -1566,7 +1565,7 @@ each count has a weight in cycles.
   Baron and run on 40,000 of the arguments the golden frames pass them,
   each one checked against the C. Plus 16 a call, for the `JSR` and the
   arguments.
-- *Timed through `main`.* Its `plot` is polar's plotters, so 4,000 lines
+- *Timed through `legacy`.* Its `plot` is `main`'s plotters, so 4,000 lines
   through it, fitted per operation: a whole byte 79, a row more inside one
   49, an end pixel 68, a steep column 71, a line's setup 173 to 247. 9.6
   cycles rms.
@@ -1578,14 +1577,14 @@ each count has a weight in cycles.
   records, the unplotter, the projection. Generously, and still 38% of the
   total.
 
-`main`'s own model ran 40% short of its port wherever it guessed, so the
+`legacy`'s own model ran 40% short of its port wherever it guessed, so the
 headline has every sketched weight 1.5 times over.
 
-**The frames.** Cycles, with `main`'s blank frames left out: 504 rim poses
-and 196 on the stress map put the eye on a boundary, where `main` draws
-nothing at all and `polar` draws the room.
+**The frames.** Cycles, with `legacy`'s blank frames left out: 504 rim poses
+and 196 on the stress map put the eye on a boundary, where `legacy` draws
+nothing at all and `main` draws the room.
 
-| | `main` median | 90% | worst | `polar` median | 90% | worst | ratio, median | 90% |
+| | `legacy` median | 90% | worst | `main` median | 90% | worst | ratio, median | 90% |
 |---|---|---|---|---|---|---|---|---|
 | sweep | 108.5k | 208.9k | 396.4k | 96.4k | 194.9k | 300.6k | 0.82 | 1.04 |
 | map 7 | 128.7k | 247.9k | 492.8k | 109.5k | 216.9k | 348.0k | 0.76 | 1.04 |
@@ -1596,21 +1595,21 @@ With the sketches as they stand, not 1.5 times over, the medians' ratios
 are 0.65 to 0.73. The demo's two frames: the typical one 118.6k to 105.9k
 (90.8k unscaled), the heaviest 289.1k to 268.7k (218.5k). (The first
 version counted the polar form's two log2 calls twice, once in its own
-timing; it overstated `polar` by 1.4k to 2.2k a frame.)
+timing; it overstated `main` by 1.4k to 2.2k a frame.)
 
 **Where it goes**, a median frame at 1.5 times:
 
 - *Clear and fill.* 58.7k becomes the fill alone, 31k to 38k. The win
   expected, about 25k a frame.
 - *Sprites.* Three times cheaper. Over the frames with one, the sprite
-  pass's median is 62k to 84k on `main`'s map 0 streams, `polar`'s 24k to
+  pass's median is 62k to 84k on `legacy`'s map 0 streams, `main`'s 24k to
   30k; the heaviest frame's goes from 73.5k to 26k.
-- *Capture.* No win: 41k to 52k against `main`'s 27k to 51k (30k to 39k
+- *Capture.* No win: 41k to 52k against `legacy`'s 27k to 51k (30k to 39k
   unscaled). See below for why.
-- *Plot.* 13k to 14k against `main`'s 6k to 10k. Lines are plotted as runs
+- *Plot.* 13k to 14k against `legacy`'s 6k to 10k. Lines are plotted as runs
   as they're made, 13 to 18 runs a frame at about 250 cycles of setup
   each, and recorded, 2k.
-- *The unplotter.* 5k to 9k that `main` never paid.
+- *The unplotter.* 5k to 9k that `legacy` never paid.
 
 So a median frame is 13 to 24% faster at the conservative end, the 90th
 percentile about the same, and the ceiling lower: the worst frame 294k to
@@ -1627,11 +1626,11 @@ part, and capture didn't. The places to look, by what they cost:
 - the records and the unplotter, 8k to 13k between them;
 - and the glue, whose real cost no one knows until it's written.
 
-**Why capture is no faster.** `main`'s `frame.py` splits capture by job,
+**Why capture is no faster.** `legacy`'s `frame.py` splits capture by job,
 and the model does the same, over 1,130 golden poses (every 20th of each
 stream):
 
-| capture | `main`, measured | `polar`, as sketched | 1.5 times over |
+| capture | `legacy`, measured | `main`, as sketched | 1.5 times over |
 |---|---|---|---|
 | vertices | 13.4k | 13.1k | 16.4k |
 | making lines | 15.3k | 15.5k | 19.8k |
@@ -1645,30 +1644,30 @@ and lines broke even, and they're the half that angles and logs were
 meant to win.
 
 - *The vertex cache* does its job inside a frame: 14.8 polar forms for the
-  14.4 distinct vertices `main` transformed 18.4 times. Across frames it
+  14.4 distinct vertices `legacy` transformed 18.4 times. Across frames it
   only helps while the camera stands still, and the goldens are each a
   fresh position; turning in place takes 11 polar forms a frame down to 3,
   about 6k.
 - *Angles don't mean fewer vertices.* The early-outs come after the angle:
   whether a side faces the eye, where it falls in the window, its column,
   all need its ends' angles first. So every vertex the walk reaches gets a
-  polar form, the same set `main` rotated.
+  polar form, the same set `legacy` rotated.
 - *A polar form isn't cheap.* 369 cycles timed: two log2s, a byte exp,
   `atan` and `lhyp`, the quadrant and the absolute values. With its 110 of
-  bookkeeping it's about 500 a vertex, against `main`'s rotation at about
+  bookkeeping it's about 500 a vertex, against `legacy`'s rotation at about
   450 (`rot`) and 730 with its own bookkeeping. Add the window work round
   each side, sketched at about 300 a vertex, and it's 881 a vertex against
-  `main`'s 727 a transform.
+  `legacy`'s 727 a transform.
 - *Logs aren't cheaper than projections.* A line is about two exp2s and two
   log2s, 350 cycles of arithmetic before its glue: 890 a line against
-  `main`'s 952, for 17.5 lines a frame against 16.1.
+  `legacy`'s 952, for 17.5 lines a frame against 16.1.
 
-What `polar` saves at the front is the column by table rather than a
+What `main` saves at the front is the column by table rather than a
 division, and the duplicate transforms. What it pays is a polar form per
 vertex and logs per line, which cost about what the rotations, projections
 and divisions did.
 
-**The plotters' setup.** The 247 cycles a run are `main`'s `plot`, the
+**The plotters' setup.** The 247 cycles a run are `legacy`'s `plot`, the
 same plotters, traced an instruction at a time on a one-pixel line, 308
 cycles in all:
 
@@ -1682,10 +1681,10 @@ cycles in all:
 | the loop and return | 16 |
 | the one pixel | 67 |
 
-So it's pessimistic for `polar`, which calls the plotter with the run in
+So it's pessimistic for `main`, which calls the plotter with the run in
 hand, and the model charges `plot_run` 50 and `record` 70 on top: about
 370 a run before a pixel, 13 to 18 runs a frame. A plotter shaped for
-`polar` would take the run in zero page (no pool), the cursor from the
+`main` would take the run in zero page (no pool), the cursor from the
 row's two tables (about 20), and the head, whole and tail counts from a
 table on the columns (about 15): 120 to 150 a run. And the records walk
 the very bytes the plotter does, so the plotter can keep `toggle_end` as it
@@ -1703,7 +1702,7 @@ with the glue as sketched. Decided so far:
 
 | | Change | Saving | Decision |
 |---|---|---|---|
-| 1 | A plotter shaped for `polar`: the run taken where the clip holds it, the cursor and the head, whole and tail counts by table, `toggle_end` kept as it plots | ~4k | yes, with lazy plotting |
+| 1 | A plotter shaped for `main`: the run taken where the clip holds it, the cursor and the head, whole and tail counts by table, `toggle_end` kept as it plots | ~4k | yes, with lazy plotting |
 | 2 | Flatten children seen through narrow portals | 1k to 2.4k | no: a narrow portal between wider ones onto the same cell would leave a stripe |
 | 3 | A cheaper polar form | ~1.8k | later, with the arithmetic as macros |
 | 4 | Row-0 toggles into the fill's start values, a byte column each | ~1.3k | to do |
@@ -1865,21 +1864,21 @@ it moves pixels, and the map would have to know its chains. Not for now.
 
 ## The comparer
 
-`src/tools/refcmp.c`, `portalc_refcmp`, renders against an exact reference:
+`src/tools/refcmp.c`, `portal_refcmp`, renders against an exact reference:
 every pixel centre's ray cast through the cells in floating point. A pixel
 counts as wrong when it matches the reference neither on its own row nor a
 row up or down. Sprites are off.
 
 ```
-portalc_refcmp MAP OUT                      # every pose of map 0 or 9
-portalc_refcmp MAP OUT.ppm X Y ANGLE CELL   # one pose: frame | reference | wrong
+portal_refcmp MAP OUT                      # every pose of map 0 or 9
+portal_refcmp MAP OUT.ppm X Y ANGLE CELL   # one pose: frame | reference | wrong
 src/tools/refcmp.py OLD NEW                 # two runs against each other
 ```
 
 The poses are every cell's centroid at 64 angles, 20,000 at random, and the
 eye 1 and 6 units off every vertex; about a minute a map.
 
-The reference casts from the engine's eye. On `polar` that's the middle of
+The reference casts from the engine's eye. On `main` that's the middle of
 the pose's unit square, (x + 1/2, y + 1/2) (`EYE_OFF` in `refcmp.c`), in
 whichever cell holds it. A pose with that point in no cell (half a unit
 into a wall: only the poses a unit off a vertex manage it, and the camera
@@ -1891,7 +1890,7 @@ that side has to leave at once, at t = 0, and the cast only took exits
 ahead of it. So from the eye, a ray also leaves by a side at t = 0 if it's
 heading out through it. The first baseline had 117 whole frames like that
 on map 0 (the eye on x = 512 and so on), with an all-black reference.
-Rebuilt from `main`'s engine (commit c77115f, its eye at the square's
+Rebuilt from `legacy`'s engine (commit c77115f, its eye at the square's
 corner, `EYE_OFF` 0) with the fixed cast, in `build/refcmp/base2_0.bin`
 and `base2_9.bin`:
 
@@ -1904,7 +1903,7 @@ Map 9's is high because of the R1 shelf, where the eye is above its
 ceiling. The new map format moved it from 8,152,722, all in 346 frames
 with the eye in R1: from above a ceiling the reference sees faces from
 behind, and it now colours them with the edge's one colour. With the old
-per-side colours put back, it matches `main`'s records exactly.
+per-side colours put back, it matches `legacy`'s records exactly.
 
 A ray exactly through a vertex ties two edges, so the reference breaks
 exact ties by the lower edge number, whatever order the ring is stored in.
@@ -1913,7 +1912,7 @@ exact ties by the lower edge number, whatever order the ring is stored in.
 
 On the frames both runs keep:
 
-| map | frames (skipped) | `main` | phase 3a |
+| map | frames (skipped) | `legacy` | phase 3a |
 |---|---|---|---|
 | 0 | 22,706 (62) | 1,036,731 | 418,022 |
 | 9 | 22,017 (15) | 6,468,692 | 6,292,368 |
@@ -1928,7 +1927,7 @@ was 0.042 of a unit off, its turn 511.31 steps rounding to 512): the tie
 goes to the lower cell, and the whole view is two steps up or down.
 
 Map 9's big regressions are R1 again. Corridor poses on its portal line,
-x = 1192, which `main` kept in the corridor, have their middle-of-the-
+x = 1192, which `legacy` kept in the corridor, have their middle-of-the-
 square eye in R1, above its ceiling. The camera has no step rule, so
 nothing stops a walk in there either, but the map was never meant to be
 walked.
@@ -1937,21 +1936,21 @@ walked.
 
 The lines from the logs, on the same frames:
 
-| map | `main` | 3a | 3b |
+| map | `legacy` | 3a | 3b |
 |---|---|---|---|
 | 0 | 1,036,731 | 418,022 | 368,080 |
 | 9 | 6,468,692 | 6,292,368 | 6,238,134 |
 
 Against 3a, map 0 is better in 11,707 frames and worse in 2,483, the
-worst by 34 pixels. Against `main`, the frames with nothing wrong went from 4,661 to
+worst by 34 pixels. Against `legacy`, the frames with nothing wrong went from 4,661 to
 8,317, and 3 are worse by more than 128 pixels. On map 9, 9,332 frames
 have nothing wrong, against 6,210.
 
 ## The phases
 
-0. **The branch and the comparer.** Done.
+0. **The comparer.** Done.
 1. **Tables.** Done: built as the 6502 will, with tests against floating
-   point, and `main`'s renderer unchanged.
+   point, and `legacy`'s renderer unchanged.
 2. **Map and collision.** Done: edges holding angle, colour and length,
    rings of sides stored backwards, the builder and checks, the comparer's
    reference; collision on dot products, the cell by angles, and the
@@ -1966,11 +1965,11 @@ have nothing wrong, against 6,210.
    its EORs stopping at each column's last toggled row; the unplotter.
 5. **Sprites, done.** After the fill, spritescale's pixels exactly, clipped
    by the saved rows.
-6. **Measure and write up, done.** Against `main`, then the journal. The old spec
-   (`docs/portal-spec.md`, `main`'s design) is gone; NOTES.md is the design.
+6. **Measure and write up, done.** Against `legacy`, then the journal. The old spec
+   (`docs/portal-spec.md`, `legacy`'s design) is gone; NOTES.md is the design.
 
 The tests are rewritten as each part lands. `beeb/` stays as it is, and
-won't build on `polar` until the port. The C comes first, looking right,
+won't build until the port. The C comes first, looking right,
 before any 6502; but everything is written to be 6502-shaped.
 
 ## Open questions

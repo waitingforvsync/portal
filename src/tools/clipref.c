@@ -1,5 +1,5 @@
 // clipref.c - the clips' answers as JSON, for make test's check of the Beeb's
-// (beeb/test/clip.6502). Run as portalc_clipref > clip.json.
+// (beeb/test/clip.6502). Run as portal_clipref > clip.json.
 
 #include <stdbool.h>
 #include <stdint.h>

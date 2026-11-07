@@ -17,7 +17,7 @@ BASE = 'http://127.0.0.1:48075'
 WIN = 'b2'
 MASTER = 'Master 128 (MOS 3.20)'
 B2 = '/snap/bin/b2'
-CONFIG_FOLDER = os.path.expanduser('~/snap/b2/common/portalc-b2')
+CONFIG_FOLDER = os.path.expanduser('~/snap/b2/common/portal-b2')
 
 
 class B2Error(Exception):

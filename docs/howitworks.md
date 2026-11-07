@@ -1,13 +1,13 @@
 # How it works
 
-A tour of one frame on `polar`, from the camera's tick to the finished
+A tour of one frame, from the camera's tick to the finished
 picture, with every piece of maths derived from scratch and the tables it
 leans on. NOTES.md is the notebook: what I tried, what I kept, and why. This
 is just how it goes now.
 
 The C is a model of the BBC build, so it's written the 6502's way: bytes
 where bytes will do, tables instead of multiplies, signs held apart from
-magnitudes. Cycles are a 2 MHz 6502's. Some are measured on `main`'s port,
+magnitudes. Cycles are a 2 MHz 6502's. Some are measured on `legacy`'s port,
 some come from the cost model in NOTES.md, and I say which.
 
 The worked numbers come from one real frame: map 0's demo pose, the eye at
@@ -978,13 +978,13 @@ within 1.14 units.
 
 ## What it costs, and what could change
 
-This part is from comparing `polar` with `main`, after phase 6. `main` is
+This part is from comparing `main` with `legacy`, after phase 6. `legacy` is
 measured: its port, on the emulator, over every 20th golden pose (1,130 of
-them). `polar` is the cost model, with its glue as sketched.
+them). `main` is the cost model, with its glue as sketched.
 
 **The front end is a wash.** Vertices and lines cost the same on both:
 
-| per frame | `main` | `polar` |
+| per frame | `legacy` | `main` |
 |---|---|---|
 | vertex arithmetic | 9.0k: 19 rotations at 339 cycles, columns, reciprocals | 6.3k: 15.4 polar forms at 385 |
 | line arithmetic | 5.6k: rows, gradients, side and near clips | 7.1k: 41 exps, 35 logs, log sines |
@@ -995,15 +995,15 @@ them). `polar` is the cost model, with its glue as sketched.
 Angles beat a rotation per vertex: 385 cycles against about 550 for the
 rotation, a reciprocal and a column. They also make turning free, and the
 camera's cell and the capture's view agree by construction. Logs lose a
-little per line. A row is the same either way (`main`'s `project_rowd` 100
+little per line. A row is the same either way (`legacy`'s `project_rowd` 100
 cycles, `exp2` 97: a mantissa and a shift, one multiplying by the height and
 the other adding its log). But the gradient costs 160 in logs against
-`main`'s 117, a byte row difference times a byte reciprocal. Off the view
+`legacy`'s 117, a byte row difference times a byte reciprocal. Off the view
 and at the near clip, logs win easily.
 
-So `polar`'s capture win is the clip and the walk, and the next one is in
-the glue, which is half the front end on both. If `polar`'s comes out 1.5
-times the sketch, as `main`'s model did, its front end would be 36k.
+So `main`'s capture win is the clip and the walk, and the next one is in
+the glue, which is half the front end on both. If `main`'s comes out 1.5
+times the sketch, as `legacy`'s model did, its front end would be 36k.
 
 **Log space could do more**, in line making:
 
@@ -1034,7 +1034,7 @@ times the sketch, as `main`'s model did, its front end would be 36k.
 
 With 1 to 3, a normal line is two adds and two exps, with no log at all,
 and line arithmetic goes from 7.1k to about 4.5k a frame (3.2k with 4),
-under `main`'s 5.6k.
+under `legacy`'s 5.6k.
 
 **Polar forms by coordinate.** Map vertices share x and y values, so the
 log and sign of each distinct coordinate's offset could be cached, cleared

@@ -1,5 +1,5 @@
 // vcacheref.c - the vertex cache's answers as JSON, for make test's check of the Beeb's
-// (beeb/test/vcache.6502). Run as portalc_vcacheref > vcache.json.
+// (beeb/test/vcache.6502). Run as portal_vcacheref > vcache.json.
 
 #include <stdint.h>
 #include <stdio.h>

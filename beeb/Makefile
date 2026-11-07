@@ -68,22 +68,22 @@ run: $(BUILD)/portal.ssd
 test: test_tables $(CHECKS:%=test_%)
 
 test_tables: $(BUILD)/portal.ssd
-	cmake --build $(CBUILD) --target portalc_tables
-	$(CBUILD)/src/portalc_tables > $(BUILD)/tables.json
+	cmake --build $(CBUILD) --target portal_tables
+	$(CBUILD)/src/portal_tables > $(BUILD)/tables.json
 	$(PY) -B host/test_tables.py $(BUILD)/portal.ssd $(BUILD)/portal.json $(BUILD)/tables.json
 
-# a check against its C tool's answers: portalc_arithref for test_arith, and so on
+# a check against its C tool's answers: portal_arithref for test_arith, and so on
 $(CHECKS:%=test_%): test_%: $(BUILD)/test_%.ssd
-	cmake --build $(CBUILD) --target portalc_$*ref
-	$(CBUILD)/src/portalc_$*ref > $(BUILD)/$*.json
+	cmake --build $(CBUILD) --target portal_$*ref
+	$(CBUILD)/src/portal_$*ref > $(BUILD)/$*.json
 	$(PY) -B host/test_build.py $* $< $(BUILD)/test_$*.json $(BUILD)/$*.json
 
 map:
-	cmake --build $(CBUILD) --target portalc_mapasm
-	$(CBUILD)/src/portalc_mapasm > src/mapdata.6502
-	$(CBUILD)/src/portalc_mapasm --stress > test/stressdata.6502
-	cmake --build $(CBUILD) --target portalc_spriteref
-	$(CBUILD)/src/portalc_spriteref --arts > test/spritedata.6502
+	cmake --build $(CBUILD) --target portal_mapasm
+	$(CBUILD)/src/portal_mapasm > src/mapdata.6502
+	$(CBUILD)/src/portal_mapasm --stress > test/stressdata.6502
+	cmake --build $(CBUILD) --target portal_spriteref
+	$(CBUILD)/src/portal_spriteref --arts > test/spritedata.6502
 
 clean:
 	rm -rf $(BUILD)

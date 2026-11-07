@@ -1,5 +1,5 @@
 \\ mapdata.6502 - the demo scene (map.c's pt_scene_init), a table a field, each within a page.
-\\ Made by portalc_mapasm (make map): don't edit it. The map's routines are in map.6502.
+\\ Made by portal_mapasm (make map): don't edit it. The map's routines are in map.6502.
 
 \\ Where the camera starts (camera.h), and the cell that holds it.
 
