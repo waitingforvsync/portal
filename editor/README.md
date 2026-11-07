@@ -11,7 +11,7 @@ go; a 3D view of the map as the engine draws it; a properties panel for the sele
 edges and vertices; an export of the map as the engine loads it; and an import of Doom
 levels. It opens on the demo map.
 
-It runs at <https://waitingforvsync.github.io/portal-editor/>.
+It runs at <https://waitingforvsync.github.io/portal/>.
 
 ## Running
 
@@ -27,7 +27,8 @@ npm run build    # type-check, then build into dist/
 
 ### In VS Code
 
-`.vscode/` holds the project's tasks, launch configuration and settings.
+`.vscode/` holds the editor's tasks, launch configuration and settings, for VS Code opened on
+this folder (`editor/`).
 
 | Action | How |
 |--------|-----|
@@ -40,10 +41,11 @@ The dev server always uses port 5173, and stops rather than move if it's taken.
 
 ### Publishing
 
-Each push to `main` runs `.github/workflows/pages.yml`, which tests and builds the editor and
-publishes `dist/` with GitHub Pages at <https://waitingforvsync.github.io/portal-editor/>. It
-can also be run by hand from the repository's Actions tab. The build refers to its assets by
-relative paths (`base` in `vite.config.ts`), so it works under the repository's path.
+Each push to `main` that touches `editor/` runs the repository's
+`.github/workflows/pages.yml`, which tests and builds the editor and publishes `dist/` with
+GitHub Pages at <https://waitingforvsync.github.io/portal/>. It can also be run by hand from
+the repository's Actions tab. The build refers to its assets by relative paths (`base` in
+`vite.config.ts`), so it works under the repository's path.
 
 ## Using the editor
 
@@ -277,7 +279,7 @@ the defaults (floor 0, ceiling 160, floor `KRRR`, ceiling `KKKB`; new edges `BBR
 
 | Path | What |
 |------|------|
-| `.github/workflows/pages.yml` | Testing, building and publishing with GitHub Pages |
+| `../.github/workflows/pages.yml` | Testing, building and publishing with GitHub Pages |
 | `docs/format.md` | The map text format |
 | `docs/export.md` | The export the engine loads |
 | `maps/demo.pmap` | portalc's demo scene |
